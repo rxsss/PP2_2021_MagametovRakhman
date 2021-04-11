@@ -2,7 +2,6 @@
 import pygame
 import random
 import time
-import sys
 import os
 pygame.init()
 
@@ -56,6 +55,7 @@ enemyY = 0 - enemyHeight
 coinX = random.randint(40, streetWidth - 40)
 coinY = 0 - coinHeight
 
+
 #Texts
 font = pygame.font.SysFont("Helvetica", 60)
 smallFont = pygame.font.SysFont("Myraid Pro", 30)
@@ -79,16 +79,14 @@ def enemyMove(x,y):
         enemyX = random.randint(40, streetWidth - enemyWidth - 40)
         score += 1
         step = random.randint(4,9)
-    screen.blit(enemyImage,(x, y))
     enemyY += step
 def showScore(x,y):
     scoreText = smallFont.render("SCORE: " + str(score), True, (0,0,255))
     screen.blit(scoreText, (x,y))
 def isCrash(x,y,xx,yy):
-    if (x in range(xx + 1, xx + enemyImage.get_width() - 1)) and (y in range(yy + 1, yy + enemyImage.get_height() - 1)):
-        return True
-    elif (xx in range(x + 1, x + playerImage.get_width() - 1)) and (yy in range(y + 1, y + playerImage.get_height() - 1)):
-        return True
+    if (x in range(xx + 5, xx + enemyWidth - 5)) or (xx in range(x + 5, x + playerWidth - 5)) :
+        if (y in range(yy + 5, yy + enemyHeight - 5)) or (yy in range(y + 5, y + playerHeight - 5)):
+            return True
 def coinSpawn():
     global coin
     global coinX
@@ -116,37 +114,39 @@ while turn:
             coin = False
             coinY = 0 - coinHeight
             score += 5
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             turn = False
+
     #Turning music
     if repeatMusic:
         pygame.mixer.Sound('./materials/background.wav').play()
         repeatMusic = False
+
+
     #Pressed keys
     pressed = pygame.key.get_pressed()
     if pressed[pygame.K_LEFT]: playerX -= step
     if pressed[pygame.K_RIGHT]: playerX += step
-    if playerX < 0:
-        playerX = 0
-    if playerX > screen.get_width() - playerImage.get_width():
-        playerX = screen.get_width() - playerImage.get_width()
-    #crash
+    if playerX + playerWidth < 0 or playerX > streetWidth:
+        playerX = playerX % streetWidth
     if isCrash(playerX, playerY, enemyX, enemyY):
         pygame.mixer.Sound('./materials/crash.wav').play()
         time.sleep(1)
         screen.fill((255,0,0))
-        screen.blit(gameOver,((screen.get_width() - gameOver.get_width())/2, (screen.get_height() - gameOver.get_height())/2))
+        screen.blit(gameOver,((streetWidth - gameOver.get_width())/2, (screen.get_height() - gameOver.get_height())/2))
         pygame.display.flip()
         time.sleep(5)
         pygame.quit()
-        sys.exit()
     
     #MARK: - Final 
     pygame.display.flip()
     screen.blit(streetImage, (0,0))
     enemyMove(enemyX,enemyY)
-    showScore(280,8)
+    pygame.draw.rect(screen, (128,128,128), pygame.Rect(270 , 2, 130, 20))
+    showScore(275, 3)
     coinSpawn()
     screen.blit(playerImage, (playerX, playerY))
+    screen.blit(enemyImage, (enemyX, enemyY))
     clock.tick(FPS)
