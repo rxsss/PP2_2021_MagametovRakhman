@@ -44,10 +44,10 @@ while isOn:
     for x in range(40, 1001):
         sin_y1 = 320 * sin((x - 40) / 160 * pi)
         sin_y2 = 320 * sin((x - 39) / 160 * pi)
-        pygame.draw.aalines(screen, (255, 0, 0), True, [(x, 360 + sin_y1), ((x + 1), 360 + sin_y2)])
+        pygame.draw.aalines(screen, (255, 0, 0), False, [(x, 360 + sin_y1), ((x + 1), 360 + sin_y2)])
     
-    for x in range(40, 1001, 5):
+    for x in range(40, 1001, 4):
         cos_y1 = 320 * cos((x - 40) / 160 * pi)
-        cos_y2 = 320 * cos((x - 39) / 160 * pi)
-        pygame.draw.aalines(screen, (0, 0, 255), True, [(x, 360 + cos_y1), ((x + 1), 360 + cos_y2)])
+        cos_y2 = 320 * cos((x - 38) / 160 * pi)
+        pygame.draw.aalines(screen, (0, 0, 255), False, [(x, 360 + cos_y1), ((x + 2), 360 + cos_y2)])
     pygame.display.flip()
